@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "target": "es6",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "strict": true,
+        "outDir": "dist"
+    },
+    "files": [
+        "./node_modules/@types/node/index.d.ts",
+        "./node_modules/@types/mongoose/index.d.ts",
+        "./node_modules/@types/mongodb/index.d.ts",
+        "./node_modules/@types/express/index.d.ts",
+    ],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.json",
+        "config/**/*.ts",
+        "config/**/*.json"
+    ],
+    "exclude": [
+        "node_modules",
+        "typings/*",
+        ".vscode",
+        "**/*.spec.ts"
+    ],
+}

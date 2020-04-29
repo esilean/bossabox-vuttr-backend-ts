@@ -1,0 +1,13 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "VUTTR",
+        "description": "This is a challenge from BossaBox.",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Leandro Bevilaqua",
+            "email": "le.bevilaqua@gmail.com"
+        },
+        "version": "1.0.0"
+    }
+}
