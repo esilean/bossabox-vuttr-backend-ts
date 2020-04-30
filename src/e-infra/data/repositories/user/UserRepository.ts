@@ -10,16 +10,27 @@ export default class UserRepository implements IUserRepository {
         this._userModel = userModel
     }
 
-    async getAll(cond: mongoose.MongooseFilterQuery<Pick<mongoose.Document, "_id">>, opts?: Object) {
-        return await this._userModel.find(cond, null, opts)
+    getAll(callback: (error: any, result: IUserModel[]) => void) {
+        this._userModel.find({}, callback)
     }
 
-    async getById(_id: string) {
-        return await this._userModel.findById(_id)
+    getById(id: string, callback: (error: any, result: IUserModel) => void) {
+        this._userModel.findById(id, callback)
     }
 
     create(data: IUserModel, callback: (error: any, result: IUserModel) => void) {
         this._userModel.create(data, callback)
+    }
+
+    update(id: string, data: IUserModel, callback: (error: any, result: Document | null) => void) {
+
+        const { name, email, updated_at } = data
+
+        this._userModel.findByIdAndUpdate(id, { name, email, updated_at }, { new: true }, callback)
+    }
+
+    delete(id: string, callback: (error: any, result: Document | null) => void) {
+        this._userModel.findByIdAndDelete(id, callback)
     }
 
 }

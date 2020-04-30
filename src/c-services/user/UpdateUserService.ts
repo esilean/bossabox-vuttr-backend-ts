@@ -1,4 +1,4 @@
-import { ICreateUserService } from "./interfaces/IUserService"
+import { IUpdateUserService } from "./interfaces/IUserService"
 import IUserRepository from "../../e-infra/data/repositories/user/interfaces/IUserRepository"
 
 import Operation from '../Operation'
@@ -8,13 +8,14 @@ import UserEntity from "../../d-domain/entities/User"
 
 import { validate } from 'class-validator'
 import { getErrors } from '../ErrorValidation'
+import { IUserModel } from "../../e-infra/data/database/models/interfaces/user.interface"
 
-class CreateUserService extends Operation implements ICreateUserService {
+class UpdateUserService extends Operation implements IUpdateUserService {
 
     private readonly _userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository) {
-        super(['SUCCESS', 'ERROR', 'ERROR_MONGOOSE', 'VALIDATION_ERROR'])
+        super(['SUCCESS', 'ERROR', 'ERROR_MONGOOSE', 'NOT_FOUND', 'VALIDATION_ERROR'])
 
         this._userRepository = userRepository
     }
@@ -23,29 +24,34 @@ class CreateUserService extends Operation implements ICreateUserService {
         return this.getEventTypes()
     }
 
-    execute(body: UserEntity) {
+    execute(id: string, body: UserEntity) {
 
-        const { SUCCESS, ERROR, ERROR_MONGOOSE, VALIDATION_ERROR } = this.getEventType()
+        const { SUCCESS, ERROR, ERROR_MONGOOSE, NOT_FOUND, VALIDATION_ERROR } = this.getEventType()
 
         try {
 
             const { name, email, password } = body
-            const newUser = new UserEntity('', name, email, password)
+            const newUser = new UserEntity(id, name, email, password)
 
             validate(newUser, { validationError: { target: false } }).then(errors => {
                 if (errors.length > 0) {
                     this.emit(VALIDATION_ERROR, getErrors(errors))
                 } else {
 
-                    this._userRepository.create(toDB(newUser), (error, result) => {
+                    this._userRepository.update(id, toDB(newUser), (error, result) => {
                         if (error) {
                             this.emit(ERROR_MONGOOSE, error)
                         }
                         else {
 
-                            const { id, name, email, password, created_at, updated_at } = toEntity(result)
+                            if (result == null) {
+                                this.emit(NOT_FOUND, null)
+                            }
+                            else {
+                                const { id, name, email, password, created_at, updated_at } = toEntity(<IUserModel>result)
 
-                            this.emit(SUCCESS, { id, name, email, password, created_at, updated_at })
+                                this.emit(SUCCESS, { id, name, email, password, created_at, updated_at })
+                            }
                         }
                     })
                 }
@@ -57,4 +63,4 @@ class CreateUserService extends Operation implements ICreateUserService {
     }
 }
 
-export default CreateUserService
+export default UpdateUserService

@@ -8,11 +8,9 @@ import IConfig from "../../config/interfaces/IConfig"
 import morgan from '../e-infra/crossCutting/utils/middlewares/logger/index'
 import swagger from '../e-infra/crossCutting/utils/swagger'
 
-
+//import controllers
 import index from '../b-controllers'
 import userController from '../b-controllers/user/userController'
-
-
 
 export default (config: IConfig, logger: Logger, container: any, errorHandler: any) => {
 

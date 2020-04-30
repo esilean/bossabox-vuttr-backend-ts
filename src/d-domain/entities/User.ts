@@ -1,34 +1,35 @@
-import { v4 as uuid } from 'uuid'
-import { Length, IsEmail, IsDate } from 'class-validator'
+import { ValidateIf, IsEmail, IsDate, IsNotEmpty } from 'class-validator'
 
 export default class User {
 
-    @Length(1)
-    private __id: string
+    private _id: string = ''
 
-    @Length(1, 75)
+    @IsNotEmpty()
     private _name: string
 
     @IsEmail()
-    @Length(1)
+    @IsNotEmpty()
     private _email: string
 
-    @Length(3)
+    @ValidateIf(o => o._id === '')
+    @IsNotEmpty()
     private _password: string
 
     @IsDate()
-    private _created_at?: Date
+    private _created_at: Date = new Date()
 
     @IsDate()
-    private _updated_at?: Date
+    private _updated_at: Date = new Date()
 
-    constructor(name: string, email: string, password: string, created_at: Date = new Date(), updated_at: Date = new Date(), _id?: string) {
-        this.__id = _id || uuid()
+    constructor(id: string, name: string, email: string, password: string) {
+        this._id = id
         this._name = name
         this._email = email
         this._password = password
-        this._created_at = created_at
-        this._updated_at = updated_at
+    }
+
+    get id() {
+        return this._id
     }
 
     get name() {
@@ -39,6 +40,18 @@ export default class User {
     }
     get password() {
         return this._password
+    }
+    get created_at() {
+        return this._created_at
+    }
+    get updated_at() {
+        return this._updated_at
+    }
+    set created_at(created_at) {
+        this._created_at = created_at
+    }
+    set updated_at(_updated_at) {
+        this._updated_at = _updated_at
     }
 
 }

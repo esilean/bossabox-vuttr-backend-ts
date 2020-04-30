@@ -1,4 +1,4 @@
-import { createContainer, asClass, InjectionMode, asValue, asFunction } from 'awilix'
+import { createContainer, asClass, InjectionMode, asValue, asFunction, Lifetime } from 'awilix'
 import { scopePerRequest } from 'awilix-express'
 import ICradle from './interfaces/ICradle'
 import Server from '../../../a-app/Server'
@@ -10,10 +10,6 @@ import Database from '../../data/database'
 import config from '../../../../config'
 import logger from '../utils/logging/logger'
 import errorHandler from '../utils/middlewares/errors/errorHandler'
-
-import CreateUserService from '../../../c-services/user/CreateUserService'
-import UserRepository from '../../data/repositories/user/UserRepository'
-import UserModel from '../../data/database/models/user'
 
 const container = createContainer<ICradle>(
     { injectionMode: InjectionMode.CLASSIC }
@@ -29,11 +25,27 @@ container.register({
     config: asValue(config),
     logger: asFunction(logger),
     errorHandler: asValue(errorHandler),
+})
 
-    createUserService: asClass(CreateUserService),
-    userRepository: asClass(UserRepository).singleton(),
-    userModel: asValue(UserModel)
+container.loadModules([
+    ['../../data/database/models/*.ts', { register: asValue }]
+], {
+    cwd: __dirname,
+    formatName: 'camelCase'
+})
 
+container.loadModules([
+    ['../../data/repositories/**/*.ts', { register: asClass, lifetime: Lifetime.SINGLETON }]
+], {
+    cwd: __dirname,
+    formatName: 'camelCase'
+})
+
+container.loadModules([
+    ['../../../c-services/**/*.ts', { register: asClass }]
+], {
+    cwd: __dirname,
+    formatName: 'camelCase'
 })
 
 export default container

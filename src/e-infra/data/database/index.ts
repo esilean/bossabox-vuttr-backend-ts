@@ -12,7 +12,8 @@ class Database {
 
         mongoose.connect(`${config.db.url}`, {
             useNewUrlParser: true,
-            useUnifiedTopology: true
+            useUnifiedTopology: true,
+            useFindAndModify: false
         })
 
         return mongoose
