@@ -34,4 +34,4 @@ UserSchema.pre('save', function (this: IUserModel, next) {
     next()
 })
 
-export default mongoose.model<IUserModel>('user', UserSchema)
+export default mongoose.model<IUserModel>('user', UserSchema, 'users', true)

@@ -12,6 +12,7 @@ import swagger from '../e-infra/crossCutting/utils/swagger'
 import index from '../b-controllers'
 import userController from '../b-controllers/user/userController'
 import tokenController from '../b-controllers/token/tokenController'
+import toolController from '../b-controllers/tool/toolController'
 
 export default (config: IConfig, logger: Logger, container: any, errorHandler: any) => {
 
@@ -30,8 +31,10 @@ export default (config: IConfig, logger: Logger, container: any, errorHandler: a
     apiRouter.use('/docs', swagger)
 
     apiRouter.use('/', index())
-    apiRouter.use('/users', userController())
     apiRouter.use('/token', tokenController())
+    apiRouter.use('/users', userController())
+    apiRouter.use('/tools', toolController())
+
 
     router.use('/api', apiRouter)
     router.use(errorHandler)

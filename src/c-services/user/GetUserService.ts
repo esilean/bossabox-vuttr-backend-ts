@@ -25,16 +25,16 @@ class GetUserService extends Operation implements IGetUserService {
 
         try {
 
-            this.userRepository.getById(id, (error, result) => {
+            this.userRepository.getById(id, (error, user) => {
                 if (error) {
                     this.emit(ERROR_MONGOOSE, error)
                 }
                 else {
-                    if (result === null) {
+                    if (user === null) {
                         this.emit(NOT_FOUND, null)
                     }
                     else {
-                        const { id, name, email, password, created_at, updated_at } = toEntity(result)
+                        const { id, name, email, password, created_at, updated_at } = toEntity(user)
 
                         this.emit(SUCCESS, { id, name, email, password, created_at, updated_at })
                     }

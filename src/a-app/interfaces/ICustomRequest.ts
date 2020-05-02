@@ -1,5 +1,9 @@
 import { Request } from 'express'
 
+
 export interface ICustomRequest<T> extends Request {
-    body: T
+    body: T,
+    query: {
+        tag: string
+    }
 }

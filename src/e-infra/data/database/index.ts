@@ -5,7 +5,7 @@ import { Logger } from 'log4js'
 class Database {
     constructor(config: IConfig, logger: Logger) {
 
-        if(!config.db.url){
+        if (!config.db.url) {
             logger.error(`Database config not found.`)
             return false
         }

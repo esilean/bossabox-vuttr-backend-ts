@@ -25,18 +25,18 @@ class GetAllUserService extends Operation implements IGetAllUserService {
 
         try {
 
-            this.userRepository.getAll({}, (error, result) => {
+            this.userRepository.getAll({}, (error, users) => {
                 if (error) {
                     this.emit(ERROR_MONGOOSE, error)
                 }
                 else {
 
-                    const users = result.map(res => {
-                        const { id, name, email, password, created_at, updated_at } = toEntity(res)
+                    const resUsers = users.map(user => {
+                        const { id, name, email, password, created_at, updated_at } = toEntity(user)
                         return { id, name, email, password, created_at, updated_at }
                     })
 
-                    this.emit(SUCCESS, users)
+                    this.emit(SUCCESS, resUsers)
                 }
             })
 

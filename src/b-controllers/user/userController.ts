@@ -116,7 +116,7 @@ function userController(
 
             createUserService
                 .on(SUCCESS, (user: IUserModel) => {
-                    response.status(Status.OK).json(user)
+                    response.status(Status.CREATED).json(user)
                 })
                 .on(VALIDATION_ERROR, (error: any) => {
                     response.status(Status.BAD_REQUEST).json({
