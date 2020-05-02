@@ -1,36 +1,39 @@
-import mongoose, { Document } from 'mongoose'
+import { Model, Document } from 'mongoose'
 import { IUserModel } from '../../database/models/interfaces/user.interface'
 import IUserRepository from './interfaces/IUserRepository'
 
 export default class UserRepository implements IUserRepository {
 
-    private _userModel: mongoose.Model<Document>
+    private userModel: Model<Document>
 
-    constructor(userModel: mongoose.Model<Document>) {
-        this._userModel = userModel
+    constructor(userModel: Model<Document>) {
+        this.userModel = userModel
     }
 
-    getAll(callback: (error: any, result: IUserModel[]) => void) {
-        this._userModel.find({}, callback)
+    getAll(cond: Object, callback: (error: any, result: IUserModel[]) => void) {
+        this.userModel.find(cond, callback)
     }
 
     getById(id: string, callback: (error: any, result: IUserModel) => void) {
-        this._userModel.findById(id, callback)
+        this.userModel.findById(id, callback)
     }
 
-    create(data: IUserModel, callback: (error: any, result: IUserModel) => void) {
-        this._userModel.create(data, callback)
+    save(data: IUserModel, callback: (error: any, result: IUserModel) => void) {
+        data.save({}, callback)
     }
 
+    //@Deprecated
     update(id: string, data: IUserModel, callback: (error: any, result: Document | null) => void) {
+        console.warn("Calling deprecated function. UserRepository (update)")
 
         const { name, email, updated_at } = data
-
-        this._userModel.findByIdAndUpdate(id, { name, email, updated_at }, { new: true }, callback)
+        this.userModel.findByIdAndUpdate(id, { name, email, updated_at }, { new: true }, callback)
     }
 
     delete(id: string, callback: (error: any, result: Document | null) => void) {
-        this._userModel.findByIdAndDelete(id, callback)
+        console.warn("Calling deprecated function. UserRepository (delete)")
+
+        this.userModel.findByIdAndDelete(id, callback)
     }
 
 }

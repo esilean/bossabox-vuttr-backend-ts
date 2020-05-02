@@ -1,5 +1,4 @@
-import { v4 as uuid } from 'uuid'
-import { Length, IsEmail, IsDate } from 'class-validator'
+import { Length, IsEmail } from 'class-validator'
 
 export default class Token {
 

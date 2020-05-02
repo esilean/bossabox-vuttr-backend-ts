@@ -5,12 +5,12 @@ import Operation from '../Operation'
 
 class DeleteUserService extends Operation implements IDeleteUserService {
 
-    private readonly _userRepository: IUserRepository
+    private readonly userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository) {
         super(['SUCCESS', 'ERROR', 'ERROR_MONGOOSE', 'NOT_FOUND'])
 
-        this._userRepository = userRepository
+        this.userRepository = userRepository
     }
 
     getEventType() {
@@ -23,15 +23,25 @@ class DeleteUserService extends Operation implements IDeleteUserService {
 
         try {
 
-            this._userRepository.delete(id, (error, result) => {
+            this.userRepository.getById(id, (error, user) => {
                 if (error) {
                     this.emit(ERROR_MONGOOSE, error)
                 }
                 else {
-                    if (result == null)
+                    if (user === null) {
                         this.emit(NOT_FOUND, null)
-                    else
-                        this.emit(SUCCESS, null)
+                    }
+                    else {
+
+                        user.remove((error, removedUser) => {
+                            if (error) {
+                                this.emit(ERROR_MONGOOSE, error)
+                            } else {
+                                this.emit(SUCCESS, null)
+                            }
+                        })
+
+                    }
                 }
             })
 

@@ -5,30 +5,30 @@ import { Mongoose } from 'mongoose'
 
 export default class App implements IApp {
 
-    private _server: IServer
-    private _logger: Logger
-    private _database: Mongoose
+    private server: IServer
+    private logger: Logger
+    private database: Mongoose
 
     constructor(server: IServer, logger: Logger, database: Mongoose ) {
-        this._server = server
-        this._logger = logger
-        this._database = database
+        this.server = server
+        this.logger = logger
+        this.database = database
     }
 
     start() {
         try {
 
-            var db =  this._database.connection;
+            var db =  this.database.connection;
             db.on('error', (error) => {
-                this._logger.error(`${error}`)
+                this.logger.error(`${error}`)
             })
             db.once('open', () => {
-                this._logger.info(`DB connection has been established successfully.`)
+                this.logger.info(`DB connection has been established successfully.`)
             });
 
-            this._server.startServer()
+            this.server.startServer()
         } catch (error) {
-            this._logger.error(`StartServerError: ${error}`)
+            this.logger.error(`StartServerError: ${error}`)
         }
     }
 }

@@ -2,12 +2,13 @@ import passport, { PassportStatic } from 'passport'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import IAuth from './interfaces/IAuth'
 import IConfig from '../../../../config/interfaces/IConfig'
+import IUserRepository from '../../data/repositories/user/interfaces/IUserRepository'
 
 export default class Auth implements IAuth {
 
-    _passport: PassportStatic
+    passport: PassportStatic
 
-    constructor(config: IConfig) {
+    constructor(userRepository: IUserRepository, config: IConfig) {
 
         const opt = Object.create(null)
 
@@ -19,39 +20,37 @@ export default class Auth implements IAuth {
         const strategy = new Strategy(opt, async function (payload, done) {
             try {
 
-                const user = true //await userRepository.getById(payload.id)
-
-                if (user !== null)
-                    done(null, user)
-                else
-                    done(null, false)
+                userRepository.getById(payload.id, function (error, user) {
+                    if (user !== null)
+                        done(null, user)
+                    else
+                        done(null, false)
+                })
 
             } catch (error) {
                 done(error, null)
             }
         })
 
-        this._passport = passport
+        this.passport = passport
 
-        this._passport.use(strategy)
+        this.passport.use(strategy)
 
-        this._passport.serializeUser<any, any>(function (user, done) {
+        this.passport.serializeUser<any, any>(function (user, done) {
             done(null, user)
         })
 
-        this._passport.deserializeUser(function (user, done) {
+        this.passport.deserializeUser(function (user, done) {
             done(null, user)
         })
-
-
     }
 
     initialize() {
-        return this._passport.initialize()
+        return this.passport.initialize()
     }
 
     authenticate() {
-        return this._passport.authenticate('jwt', { session: false })
+        return this.passport.authenticate('jwt', { session: false })
     }
 
 }

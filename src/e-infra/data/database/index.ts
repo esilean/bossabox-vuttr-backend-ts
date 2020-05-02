@@ -13,7 +13,7 @@ class Database {
         mongoose.connect(`${config.db.url}`, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            useFindAndModify: false
+            useCreateIndex: true,
         })
 
         return mongoose

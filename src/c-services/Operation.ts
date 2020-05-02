@@ -3,19 +3,19 @@ import { IEventType } from "./interfaces/IOperation";
 
 class Operation extends EventEmitter {
 
-    private _eventTypes: IEventType = {}
+    private eventTypes: IEventType = {}
 
     constructor(eventTypes: Array<string>) {
         super()
-        this._eventTypes = createEventTypes(eventTypes)
+        this.eventTypes = createEventTypes(eventTypes)
     }
 
     getEventTypes() {
-        return this._eventTypes
+        return this.eventTypes
     }
 
     on(eventType: string, handler: any) {
-        if (this._eventTypes[eventType]) {
+        if (this.eventTypes[eventType]) {
             return this.addListener(eventType, handler)
         }
 

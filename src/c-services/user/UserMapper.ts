@@ -19,7 +19,7 @@ export function toEntity(user: IUserModel) {
     return entity
 }
 
-export function toDB(entity: UserEntity) {
+export function toSave(entity: UserEntity) {
 
     const { name, email, password } = entity
 
@@ -27,8 +27,17 @@ export function toDB(entity: UserEntity) {
         name,
         email,
         password,
-        updated_at: new Date(),
     })
+
+    return user
+}
+
+export function toUpdate(entity: UserEntity, user: IUserModel) {
+
+    const { name, email } = entity
+
+    user.name = name
+    user.email = email
 
     return user
 }

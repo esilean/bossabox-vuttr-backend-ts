@@ -2,10 +2,13 @@ import { Router, Request, Response, NextFunction } from 'express'
 import { makeInvoker } from 'awilix-express'
 import Status from 'http-status'
 
+import { celebrate, Segments, Joi } from 'celebrate'
+
 import { ICreateUserService, IDeleteUserService, IGetUserService, IGetAllUserService, IUpdateUserService } from '../../c-services/user/interfaces/IUserService'
 import UserEntity from '../../d-domain/entities/User'
 import { ICustomRequest } from '../../a-app/interfaces/ICustomRequest'
 import { IUserModel } from '../../e-infra/data/database/models/interfaces/user.interface'
+import IAuth from '../../e-infra/crossCutting/authentication/interfaces/IAuth'
 
 export default () => {
 
@@ -13,15 +16,51 @@ export default () => {
 
     const api = makeInvoker(userController)
 
-    router.get('/', api('getAll'))
-    router.get('/:id', api('get'))
-    router.post('/', api('create'))
-    router.put('/:id', api('update'))
-    router.delete('/:id', api('delete'))
+    router.get('/', api('authenticate'), api('getAll'))
+
+    router.get('/:id', api('authenticate'),
+        celebrate({
+            [Segments.PARAMS]: Joi.object().keys({
+                id: Joi.string().required().min(24).max(24),
+            }),
+        }),
+        api('get'))
+
+    router.post('/', api('authenticate'),
+        celebrate({
+            [Segments.BODY]: Joi.object().keys({
+                name: Joi.string().required().max(100),
+                email: Joi.string().required().max(100),
+                password: Joi.string().required().max(100),
+            })
+        }),
+        api('create'))
+
+    router.put('/:id', api('authenticate'),
+        celebrate({
+            [Segments.PARAMS]: Joi.object().keys({
+                id: Joi.string().required().min(24).max(24),
+            }),
+            [Segments.BODY]: Joi.object().keys({
+                name: Joi.string().required().max(100),
+                email: Joi.string().required().max(100),
+            })
+        }),
+        api('update'))
+
+    router.delete('/:id', api('authenticate'),
+        celebrate({
+            [Segments.PARAMS]: Joi.object().keys({
+                id: Joi.string().required().min(24).max(24),
+            }),
+        }),
+        api('delete'))
+
     return router
 }
 
 function userController(
+    auth: IAuth,
     getAllUserService: IGetAllUserService,
     getUserService: IGetUserService,
     createUserService: ICreateUserService,
@@ -29,6 +68,7 @@ function userController(
     deleteUserService: IDeleteUserService
 ) {
     return {
+        authenticate: auth.authenticate(),
         getAll: (request: ICustomRequest<UserEntity>, response: Response, next: NextFunction) => {
             const { SUCCESS, ERROR, ERROR_MONGOOSE } = getAllUserService.getEventType()
 
@@ -108,7 +148,7 @@ function userController(
                         type: 'NotFoundError',
                         error: 'User not found'
                     })
-                })                
+                })
                 .on(VALIDATION_ERROR, (error: any) => {
                     response.status(Status.BAD_REQUEST).json({
                         type: 'ValidationError',

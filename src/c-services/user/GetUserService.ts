@@ -7,12 +7,12 @@ import { toEntity } from './UserMapper'
 
 class GetUserService extends Operation implements IGetUserService {
 
-    private readonly _userRepository: IUserRepository
+    private readonly userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository) {
         super(['SUCCESS', 'ERROR', 'ERROR_MONGOOSE', 'NOT_FOUND'])
 
-        this._userRepository = userRepository
+        this.userRepository = userRepository
     }
 
     getEventType() {
@@ -25,12 +25,12 @@ class GetUserService extends Operation implements IGetUserService {
 
         try {
 
-            this._userRepository.getById(id, (error, result) => {
+            this.userRepository.getById(id, (error, result) => {
                 if (error) {
                     this.emit(ERROR_MONGOOSE, error)
                 }
                 else {
-                    if (result == null) {
+                    if (result === null) {
                         this.emit(NOT_FOUND, null)
                     }
                     else {

@@ -7,12 +7,12 @@ import { toEntity } from './UserMapper'
 
 class GetAllUserService extends Operation implements IGetAllUserService {
 
-    private readonly _userRepository: IUserRepository
+    private readonly userRepository: IUserRepository
 
     constructor(userRepository: IUserRepository) {
         super(['SUCCESS', 'ERROR', 'ERROR_MONGOOSE'])
 
-        this._userRepository = userRepository
+        this.userRepository = userRepository
     }
 
     getEventType() {
@@ -25,7 +25,7 @@ class GetAllUserService extends Operation implements IGetAllUserService {
 
         try {
 
-            this._userRepository.getAll((error, result) => {
+            this.userRepository.getAll({}, (error, result) => {
                 if (error) {
                     this.emit(ERROR_MONGOOSE, error)
                 }

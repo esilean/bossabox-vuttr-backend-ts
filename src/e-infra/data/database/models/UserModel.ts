@@ -15,7 +15,6 @@ const UserSchema: Schema = new Schema({
     },
     password: {
         type: String,
-        min: 1
     },
     created_at: {
         type: Date,
@@ -28,9 +27,11 @@ const UserSchema: Schema = new Schema({
 })
 
 UserSchema.pre('save', function (this: IUserModel, next) {
-    this.created_at = new Date()
-    this.password = encryptPassword(this.password)
+    if (this.isNew)
+        this.password = encryptPassword(this.password)
+
+    this.updated_at = new Date()
     next()
 })
 
-export default mongoose.model<IUserModel>('user', UserSchema, 'users', true)
+export default mongoose.model<IUserModel>('user', UserSchema)

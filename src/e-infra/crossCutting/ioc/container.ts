@@ -7,6 +7,7 @@ import Router from '../../../a-app/Router'
 import Auth from '../authentication'
 import Database from '../../data/database'
 
+import jwt from '../authentication/jwt'
 import config from '../../../../config'
 import logger from '../utils/logging/logger'
 import errorHandler from '../utils/middlewares/errors/errorHandler'
@@ -19,6 +20,7 @@ container.register({
     app: asClass(App).singleton(),
     server: asClass(Server).singleton(),
     auth: asClass(Auth).singleton(),
+    jwt: asClass(jwt).singleton(),
     database: asClass(Database).singleton(),
     router: asFunction(Router).singleton(),
     container: asValue(scopePerRequest(container)),
